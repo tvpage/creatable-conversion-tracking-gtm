@@ -1,0 +1,5 @@
+homepage: "https://www.creatable.io"
+documentation: "https://support.creatable.io/conversion-tracking-pixel"
+versions:
+  - sha: 9174d1a67d918de7bf3342d7cbb85e579212984f
+    changeNotes: Initial release.
