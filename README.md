@@ -19,4 +19,4 @@ Full setup, testing and troubleshooting steps: [Conversion Tracking Pixel](https
 
 ## Support
 
-Email support@creatable.io, or open an issue in this repository.
+Email support@creatable.com, or open an issue in this repository.
