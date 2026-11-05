@@ -41,6 +41,13 @@ ___TEMPLATE_PARAMETERS___
     "help": "Your Creatable account ID (the <code>li</code> value). Provided by your Creatable account manager. Stage and Production use different account IDs."
   },
   {
+    "type": "TEXT",
+    "name": "cookieDomain",
+    "displayName": "Cookie domain",
+    "simpleValueType": true,
+    "help": "Optional. Scope the Creatable cookie to this domain instead of the site's top-level domain. It must be the page's hostname or a parent of it, for example <code>us.example.com</code>; a container shared by several regional sites should use the <code>{{Page Hostname}}</code> variable. Any other value is ignored and the top-level domain is used. Leave blank to auto-detect."
+  },
+  {
     "type": "RADIO",
     "name": "environment",
     "displayName": "Environment",
@@ -197,6 +204,10 @@ const isStage = data.environment === 'stage';
 const config = { li: makeString(data.accountId) };
 if (isStage) {
   config.logUrl = 'https://stage.tvpage.com/api/__tvpa.gif';
+}
+const cookieDomain = makeString(data.cookieDomain || '').trim();
+if (cookieDomain) {
+  config.cookieDomain = cookieDomain;
 }
 tvpaPush(['config', config]);
 log('config', config);
@@ -506,6 +517,28 @@ scenarios:
 
     assertThat(pushes[0]).isEqualTo(['config', {li: '1759449'}]);
     assertThat(injected).isEqualTo(['https://a.tvpage.com/tvpa.min.js']);
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Cookie domain is passed through when set
+  code: |-
+    dataLayer = {
+      'ecommerce.transaction_id': 'ORDER-100045',
+      'ecommerce.items': [{item_id: 'bb8100', price: 14.99, quantity: 4}]
+    };
+
+    runCode({accountId: '1759449', environment: 'production', dataSource: 'dataLayer', cookieDomain: ' us.example.com '});
+
+    assertThat(pushes[0]).isEqualTo(['config', {li: '1759449', cookieDomain: 'us.example.com'}]);
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Cookie domain is left out when blank
+  code: |-
+    dataLayer = {
+      'ecommerce.transaction_id': 'ORDER-100045',
+      'ecommerce.items': [{item_id: 'bb8100', price: 14.99, quantity: 4}]
+    };
+
+    runCode({accountId: '1759449', environment: 'production', dataSource: 'dataLayer', cookieDomain: '  '});
+
+    assertThat(pushes[0]).isEqualTo(['config', {li: '1759449'}]);
     assertApi('gtmOnSuccess').wasCalled();
 setup: |-
   let dataLayer = {};
