@@ -1,5 +1,7 @@
 homepage: "https://www.creatable.com"
 documentation: "https://support.creatable.io/conversion-tracking-pixel"
 versions:
+  - sha: b08b58054cd601f0572c3f38819f348a7398b800
+    changeNotes: Add an optional Cookie domain field that passes cookieDomain to the Creatable library (requires library 0.4.0).
   - sha: 9174d1a67d918de7bf3342d7cbb85e579212984f
     changeNotes: Initial release.
